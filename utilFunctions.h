@@ -1,24 +1,24 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<string> Swap(const vector<string>& board) {
-    vector<string> swappedBoard = board;
-    unordered_map<string, string> swappedDict = {{"W", "B"}, {"B", "W"}};
-    for (string& c : swappedBoard) {
+string Swap(const string board) {
+    string swappedBoard = board;
+    unordered_map<char, char> swappedDict = {{'W', 'B'}, {'B', 'W'}};
+    for (char& c : swappedBoard) {
         c = swappedDict[c];
     }
     return swappedBoard;
 }
 
-vector<string> GenerateHopping(const vector<string>& board) {
+vector<string> GenerateHopping(const string board) {
     vector<string> nextHopMoveList;
     for (int i = 0; i < board.size(); ++i) {
-        if (board[i] == "W") {
+        if (board[i] == 'W') {
             for (int j = 0; j < board.size(); ++j) {
-                if (board[j] == "x") {
-                    vector<string> boardCopy = board;
-                    boardCopy[i] = "x";
-                    boardCopy[j] = "W";
+                if (board[j] == 'x') {
+                    string boardCopy = board;
+                    boardCopy[i] = 'x';
+                    boardCopy[j] = 'W';
                     if (CloseMill(j, boardCopy)) {
                         GenerateRemove(boardCopy, nextHopMoveList);
                     }
@@ -34,36 +34,36 @@ vector<string> GenerateHopping(const vector<string>& board) {
 
 
 
-vector<string> GenerateRemove(const vector<string>& board, const vector<string>& addPieceList) {
+vector<string> GenerateRemove(const string board, const vector<string>& addPieceList) {
     vector<string> moves = addPieceList;
     bool isPositionChanged = false;
     for (int i = 0; i < board.size(); ++i) {
-        if (board[i] == "B") {
+        if (board[i] == 'B') {
             if (!CloseMill(i, board)) {
-                vector<string> boardCopy = board;
-                boardCopy[i] = "x";
+                string boardCopy = board;
+                boardCopy[i] = 'x';
                 isPositionChanged = true;
                 moves.emplace_back(boardCopy);
             }
         }
     }
     if (!isPositionChanged) {
-        vector<string> boardCopy = board;
+        string boardCopy = board;
         moves.emplace_back(boardCopy);
     }
     return moves;
 }
 
-vector<string> GenerateMove(const vector<string>& board) {
+vector<string> GenerateMove(const string board) {
     vector<string> nextMoveList;
     for (int i = 0; i < board.size(); ++i) {
-        if (board[i] == "W") {
+        if (board[i] == 'W') {
             vector<int> neighboursList = Neighbours(i);
             for (int j : neighboursList) {
-                if (board[j] == "x") {
-                    vector<string> boardCopy = board;
-                    boardCopy[i] = "x";
-                    boardCopy[j] = "W";
+                if (board[j] == 'x') {
+                    string boardCopy = board;
+                    boardCopy[i] = 'x';
+                    boardCopy[j] = 'W';
                     if (CloseMill(j, boardCopy)) {
                         nextMoveList = GenerateRemove(boardCopy, nextMoveList);
                     }
@@ -77,8 +77,8 @@ vector<string> GenerateMove(const vector<string>& board) {
     return nextMoveList;
 }
 
-vector<string> GenerateMovesMidgameEndgame(const vector<string>& board) {
-    if (count(board.begin(), board.end(), "W") == 3) {
+vector<string> GenerateMovesMidgameEndgame(const string board) {
+    if (count(board.begin(), board.end(), 'W') == 3) {
         return GenerateHopping(board);
     }
     else {
@@ -86,12 +86,12 @@ vector<string> GenerateMovesMidgameEndgame(const vector<string>& board) {
     }
 }
 
-vector<string> GenerateAdd(const vector<string>& board) {
+vector<string> GenerateAdd(const string board) {
     vector<string> addPieceList;
     for (int i = 0; i < board.size(); ++i) {
-        if (board[i] == "x") {
-            vector<string> boardCopy = board;
-            boardCopy[i] = "W";
+        if (board[i] == 'x') {
+            string boardCopy = board;
+            boardCopy[i] = 'W';
             if (CloseMill(i, boardCopy)) {
                 addPieceList = GenerateRemove(boardCopy, addPieceList);
             }
@@ -103,19 +103,18 @@ vector<string> GenerateAdd(const vector<string>& board) {
     return addPieceList;
 }
 
-vector<string> GenerateMovesOpening(const vector<string>& board){
+vector<string> GenerateMovesOpening(const string board){
     return GenerateAdd(board);
 }
 
 
 //Getting list of moves for Black Player
-vector<string> GenerateBlackMoves(const vector<string>& board) {
+vector<string> GenerateBlackMoves(const string board) {
     vector<string> blackMoveList, nextBlackMoveList;
-    vector<string> blackSwappedBoard = Swap(board);
+    string blackSwappedBoard = Swap(board);
     blackMoveList = GenerateMovesMidgameEndgame(blackSwappedBoard);
     for (const string& move : blackMoveList) {
-        vector<string> swappedMove = {move};
-        vector<string> processedMove = Swap(swappedMove);
+        string processedMove = Swap(move);
         nextBlackMoveList.emplace_back(processedMove);
     }
     return nextBlackMoveList;
@@ -175,9 +174,9 @@ vector<int> Neighbours(int pos) {
 }
 
 //Checking if a position canc lose a mill in the board
-bool CloseMill(int loc, const vector<string>& board) {
-    string piece = board[loc];
-    if(piece == "W" || piece == "B"){
+bool CloseMill(int loc, const string board) {
+    char piece = board[loc];
+    if(piece == 'W' || piece == 'B'){
         switch (loc) {
             case 0:
                 return ((board[6] == piece && board[18] == piece));
