@@ -3,16 +3,21 @@
 
 using namespace std;
 
+string MaxMin(const string& brdPos, int depth);
+string MinMax(const string& brdPos, int depth);
+
 int positionsEvaluated=0;
 int minimaxEstimate=0;
 
 int StaticEstimation(const string& brd)
 {
-    positionsEvaluated++;
+    
     int whites = count(brd.begin(), brd.end(), 'W');
     int blacks = count(brd.begin(), brd.end(), 'B');
     int numBlackMoves = GenerateBlackMoves(brd).size();
-
+    //cout<<"White count: "<<whites<<endl;
+    //cout<<"Blacks count: "<<blacks<<endl;
+    //cout<<"Num of black moves: "<<numBlackMoves<<endl;
     if (blacks <= 2)
         return 10000;
     else if (whites <= 2)
@@ -37,7 +42,7 @@ string MaxMin(const string& brdPos, int depth)
     {
         string mnBrd = MinMax(move, depth);
         int staticEs = StaticEstimation(mnBrd);
-
+        positionsEvaluated++;
         if (v < staticEs)
         {
             v = staticEs;
@@ -53,6 +58,7 @@ string MinMax(const string& brdPos, int depth)
 {
     if (depth == 0)
         return brdPos;
+    
     depth--;
 
     string mnBrd;
@@ -63,7 +69,7 @@ string MinMax(const string& brdPos, int depth)
     {
         string mxBrd = MaxMin(move, depth);
         int staticEs = StaticEstimation(mxBrd);
-
+        positionsEvaluated++;
         if (v > staticEs)
         {
             v = staticEs;
@@ -97,18 +103,19 @@ int main(int argc, char* argv[])
     getline(inFile, brd1);
     inFile.close();
 
-    if (brd1.size() != 22)
+    if (brd1.size() != 21)
     {
-        cout << "Invalid board1.txt length: " << brd1.size() << endl;
+        cout << "Invalid input board1.txt length: " << brd1.size() << endl;
         return 0;
     }
 
+    cout<<"------------------Input Board------------------"<<endl;
+    cout<<"\n\n";
+    drawBoard(brd1);
     string movePlayed = MaxMin(brd1, depth);
     StaticEstimation(movePlayed);
 
-    cout << "Board Position: " << movePlayed << endl;
-    cout << "Positions evaluated by static estimation: " << positionsEvaluated << endl;
-    cout << "MINIMAX estimate: " << minimaxEstimate << endl;
+    
 
     ofstream outFile(outputFile);
     if (!outFile)
@@ -116,7 +123,13 @@ int main(int argc, char* argv[])
         cout << "Failed to open " << outputFile << endl;
         return 0;
     }
+    cout<<"\n------------------Output Board------------------"<<endl;
+    cout<<"\n\n";
+    drawBoard(movePlayed);
 
+    cout << "\nOutput Board Position: " << movePlayed << endl;
+    cout << "Positions evaluated by static estimation: " << positionsEvaluated << endl;
+    cout << "MINIMAX estimate: " << minimaxEstimate << endl;
     outFile << movePlayed;
     outFile.close();
 
