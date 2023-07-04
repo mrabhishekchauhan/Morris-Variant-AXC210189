@@ -7,7 +7,7 @@ string MaxMin(const string& brdPos, int depth);
 string MinMax(const string& brdPos, int depth);
 
 int positionsEvaluated=0;
-int minimaxEstimate=0;
+int miniMaxEstimate=0;
 
 int StaticEstimation(const string& brd)
 {
@@ -46,7 +46,7 @@ string MaxMin(const string& brdPos, int depth)
         if (v < staticEs)
         {
             v = staticEs;
-            minimaxEstimate = v;
+            miniMaxEstimate = v;
             mxBrd = move;
         }
     }
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
 
     cout << "\nOutput Board Position: " << movePlayed << endl;
     cout << "Positions evaluated by static estimation: " << positionsEvaluated << endl;
-    cout << "MINIMAX estimate: " << minimaxEstimate << endl;
+    cout << "MINIMAX estimate: " << miniMaxEstimate << endl;
     outFile << movePlayed;
     outFile.close();
 
