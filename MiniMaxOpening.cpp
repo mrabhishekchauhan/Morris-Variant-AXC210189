@@ -9,6 +9,7 @@ string MinMax(const string& brdPos, int depth);
 int positionsEvaluated=0;
 int miniMaxEstimate=0;
 
+//Static Estimation function for MiniMax Opening
 int staticEstimation(const string& board) {
     positionsEvaluated++;
     int countW = count(board.begin(), board.end(), 'W');
@@ -16,6 +17,7 @@ int staticEstimation(const string& board) {
     return countW - countB;
 }
 
+//MaxMin function for estimating miniMax value
 string MaxMin(const string& inputBoardPos, int depth) {
     if (depth == 0)
         return inputBoardPos;
@@ -36,6 +38,7 @@ string MaxMin(const string& inputBoardPos, int depth) {
     return maxBoard;
 }
 
+//MinMax function for estimating miniMax value
 string MinMax(const string& inputBoardPos, int depth) {
     if (depth == 0)
         return inputBoardPos;
@@ -57,11 +60,13 @@ string MinMax(const string& inputBoardPos, int depth) {
 
 int main(int argc, char* argv[]) {
     try {
+        //Checking for correct number of arguments
         if (argc < 4) {
             cout << "Please run using the specified format: ./MiniMaxOpening board1.txt board2.txt 2" << endl;
             return 0;
         }
 
+        //Reading input from command line and opening input file
         ifstream inFile(argv[1]);
         if (!inFile) {
             cout << "Failed to open input file" << argv[1] << endl;
@@ -76,11 +81,13 @@ int main(int argc, char* argv[]) {
             return 0;
         }
 
+        //Printing input board and calling MaxMin function
         cout<<"------------------Input Board------------------"<<endl;
         cout<<"\n\n";
-        drawBoard(board1);
+        DrawBoard(board1);
         string movePlayed = MaxMin(board1, depth);
 
+        //Writing output to file and printing output board with static estimation
         ofstream outFile(argv[2]);
         if (!outFile) {
             cout << "Failed to open output file" << argv[2] << endl;
@@ -89,7 +96,7 @@ int main(int argc, char* argv[]) {
 
         cout<<"\n------------------Output Board------------------"<<endl;
         cout<<"\n\n";
-        drawBoard(movePlayed);
+        DrawBoard(movePlayed);
 
         cout << "\nOutput Board Position: " << movePlayed << endl;
         cout << "Positions evaluated by static estimation: " << positionsEvaluated << endl;

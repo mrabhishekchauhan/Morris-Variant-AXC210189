@@ -9,11 +9,13 @@ string MinMax(const string& brdPos, int depth);
 int positionsEvaluated = 0;
 int miniMaxEstimate = 0;
 
+//Static Estimation function for MiniMax Black Opening
 int StaticEstimation(const string& brd)
 {
     return count(brd.begin(), brd.end(), 'W') - count(brd.begin(), brd.end(), 'B');
 }
 
+//MaxMin function for estimating miniMax value
 string MaxMin(const string& brdPos, int depth)
 {
     if (depth == 0)
@@ -40,6 +42,7 @@ string MaxMin(const string& brdPos, int depth)
     return mxBrd;
 }
 
+//MinMax function for estimating miniMax value
 string MinMax(const string& brdPos, int depth)
 {
     if (depth == 0)
@@ -67,59 +70,66 @@ string MinMax(const string& brdPos, int depth)
 
 int main(int argc, char* argv[])
 {
-    if (argc != 4)
-    {
-        cout << "Please specify in format: ./MiniMaxOpeningBlack board1.txt board2.txt 2" << endl;
-        return 0;
+    try {
+        //Checking for correct number of arguments
+        if (argc != 4)
+        {
+            cout << "Please specify in format: ./MiniMaxOpeningBlack board1.txt board2.txt 2" << endl;
+            return 0;
+        }
+
+        //Reading input from command line and opening input file
+        string boardFile = argv[1];
+        string outputFile = argv[2];
+        int depth = stoi(argv[3]);
+
+        
+        ifstream inFile(boardFile);
+        if (!inFile)
+        {
+            cout << "Failed to open " << boardFile << endl;
+            return 0;
+        }
+
+        string brd1;
+        getline(inFile, brd1);
+        inFile.close();
+
+        if (brd1.size() != 21)
+        {
+            cout << "Invalid board1.txt length: " << brd1.size() << endl;
+            return 0;
+        }
+
+        //Printing swapped input board and calling MaxMin function followed by StaticEstimation function
+        string swappedBoard=Swap(brd1);
+
+        cout<<"------------------Input Board------------------"<<endl;
+        cout<<"\n\n";
+        DrawBoard(swappedBoard);
+        string move=MaxMin(swappedBoard, depth);
+        string blackMove = Swap(move);
+        StaticEstimation(blackMove);
+
+        //Writing output to file and printing output board with static estimation
+        ofstream outFile(outputFile);
+        if (!outFile)
+        {
+            cout << "Failed to open " << outputFile << endl;
+            return 0;
+        }
+        cout<<"\n------------------Output Board------------------"<<endl;
+        cout<<"\n\n";
+        DrawBoard(blackMove);
+
+        cout << "Board Position: " << blackMove << endl;
+        cout << "Positions evaluated by static estimation: " << positionsEvaluated << endl;
+        cout << "MINIMAX estimate: " << miniMaxEstimate << endl;
+
+        outFile << blackMove;
+        outFile.close();
+    } catch (exception& e) {
+        cout << "An exception occurred: " << e.what() << endl;
     }
-
-    string boardFile = argv[1];
-    string outputFile = argv[2];
-    int depth = stoi(argv[3]);
-
-    ifstream inFile(boardFile);
-    if (!inFile)
-    {
-        cout << "Failed to open " << boardFile << endl;
-        return 0;
-    }
-
-    string brd1;
-    getline(inFile, brd1);
-    inFile.close();
-
-    if (brd1.size() != 21)
-    {
-        cout << "Invalid board1.txt length: " << brd1.size() << endl;
-        return 0;
-    }
-
-    string swappedBoard=Swap(brd1);
-
-    cout<<"------------------Input Board------------------"<<endl;
-    cout<<"\n\n";
-    drawBoard(swappedBoard);
-    string move=MaxMin(swappedBoard, depth);
-    string blackMove = Swap(move);
-    StaticEstimation(blackMove);
-
-    
-    ofstream outFile(outputFile);
-    if (!outFile)
-    {
-        cout << "Failed to open " << outputFile << endl;
-        return 0;
-    }
-    cout<<"\n------------------Output Board------------------"<<endl;
-    cout<<"\n\n";
-    drawBoard(blackMove);
-
-    cout << "Board Position: " << blackMove << endl;
-    cout << "Positions evaluated by static estimation: " << positionsEvaluated << endl;
-    cout << "MINIMAX estimate: " << miniMaxEstimate << endl;
-
-    outFile << blackMove;
-    outFile.close();
-
     return 0;
 }

@@ -9,6 +9,7 @@ string MinMax(const string& brdPos, int depth);
 int positionsEvaluated=0;
 int miniMaxEstimate=0;
 
+//Static Estimation function for MiniMax Game
 int StaticEstimation(const string& brd)
 {
     
@@ -28,6 +29,7 @@ int StaticEstimation(const string& brd)
         return (1000 * (whites - blacks)) - numBlackMoves;
 }
 
+//MaxMin function for estimating miniMax value
 string MaxMin(const string& brdPos, int depth)
 {
     if (depth == 0)
@@ -54,6 +56,7 @@ string MaxMin(const string& brdPos, int depth)
     return mxBrd;
 }
 
+//MinMax function for estimating miniMax value
 string MinMax(const string& brdPos, int depth)
 {
     if (depth == 0)
@@ -82,56 +85,61 @@ string MinMax(const string& brdPos, int depth)
 
 int main(int argc, char* argv[])
 {
-    if (argc != 4)
-    {
-        cout << "Please specify in format: ./MiniMaxGame board1.txt board2.txt 2" << endl;
-        return 0;
+    try {
+        //Checking for correct number of arguments
+        if (argc != 4)
+        {
+            cout << "Please specify in format: ./MiniMaxGame board1.txt board2.txt 2" << endl;
+            return 0;
+        }
+
+        //Reading input from command line and opening input file
+        string boardFile = argv[1];
+        string outputFile = argv[2];
+        int depth = stoi(argv[3]);
+
+        ifstream inFile(boardFile);
+        if (!inFile)
+        {
+            cout << "Failed to open " << boardFile << endl;
+            return 0;
+        }
+
+        string brd1;
+        getline(inFile, brd1);
+        inFile.close();
+
+        if (brd1.size() != 21)
+        {
+            cout << "Invalid input board1.txt length: " << brd1.size() << endl;
+            return 0;
+        }
+
+        //Printing input board and calling MaxMin function
+        cout<<"------------------Input Board------------------"<<endl;
+        cout<<"\n\n";
+        DrawBoard(brd1);
+        string movePlayed = MaxMin(brd1, depth);
+        StaticEstimation(movePlayed);
+
+        //Writing output to file and printing output board with static estimation
+        ofstream outFile(outputFile);
+        if (!outFile)
+        {
+            cout << "Failed to open " << outputFile << endl;
+            return 0;
+        }
+        cout<<"\n------------------Output Board------------------"<<endl;
+        cout<<"\n\n";
+        DrawBoard(movePlayed);
+
+        cout << "\nOutput Board Position: " << movePlayed << endl;
+        cout << "Positions evaluated by static estimation: " << positionsEvaluated << endl;
+        cout << "MINIMAX estimate: " << miniMaxEstimate << endl;
+        outFile << movePlayed;
+        outFile.close();
+    } catch (exception& e) {
+        cout << "An exception occurred: " << e.what() << endl;
     }
-
-    string boardFile = argv[1];
-    string outputFile = argv[2];
-    int depth = stoi(argv[3]);
-
-    ifstream inFile(boardFile);
-    if (!inFile)
-    {
-        cout << "Failed to open " << boardFile << endl;
-        return 0;
-    }
-
-    string brd1;
-    getline(inFile, brd1);
-    inFile.close();
-
-    if (brd1.size() != 21)
-    {
-        cout << "Invalid input board1.txt length: " << brd1.size() << endl;
-        return 0;
-    }
-
-    cout<<"------------------Input Board------------------"<<endl;
-    cout<<"\n\n";
-    drawBoard(brd1);
-    string movePlayed = MaxMin(brd1, depth);
-    StaticEstimation(movePlayed);
-
-    
-
-    ofstream outFile(outputFile);
-    if (!outFile)
-    {
-        cout << "Failed to open " << outputFile << endl;
-        return 0;
-    }
-    cout<<"\n------------------Output Board------------------"<<endl;
-    cout<<"\n\n";
-    drawBoard(movePlayed);
-
-    cout << "\nOutput Board Position: " << movePlayed << endl;
-    cout << "Positions evaluated by static estimation: " << positionsEvaluated << endl;
-    cout << "MINIMAX estimate: " << miniMaxEstimate << endl;
-    outFile << movePlayed;
-    outFile.close();
-
     return 0;
 }
