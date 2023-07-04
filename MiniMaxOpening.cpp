@@ -16,7 +16,7 @@ int staticEstimation(const string& board) {
     return countW - countB;
 }
 
-string maxMin(const string& inputBoardPos, int depth) {
+string MaxMin(const string& inputBoardPos, int depth) {
     if (depth == 0)
         return inputBoardPos;
     depth--;
@@ -25,7 +25,7 @@ string maxMin(const string& inputBoardPos, int depth) {
     vector<string> wMoves = GenerateAdd(inputBoardPos);
     string maxBoard;
     for (const string& wMove : wMoves) {
-        string minBoard = minMax(wMove, depth);
+        string minBoard = MinMax(wMove, depth);
         int staticEst = staticEstimation(minBoard);
         if (v < staticEst) {
             v = staticEst;
@@ -36,7 +36,7 @@ string maxMin(const string& inputBoardPos, int depth) {
     return maxBoard;
 }
 
-string minMax(const string& inputBoardPos, int depth) {
+string MinMax(const string& inputBoardPos, int depth) {
     if (depth == 0)
         return inputBoardPos;
     depth--;
@@ -45,7 +45,7 @@ string minMax(const string& inputBoardPos, int depth) {
     vector<string> bMoves = GenerateBlackMoves(inputBoardPos);
     string minBoard;
     for (const string& bMove : bMoves) {
-        string maxBoard = maxMin(bMove, depth);
+        string maxBoard = MaxMin(bMove, depth);
         int staticEst = staticEstimation(maxBoard);
         if (v > staticEst) {
             v = staticEst;
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
         cout<<"------------------Input Board------------------"<<endl;
         cout<<"\n\n";
         drawBoard(board1);
-        string movePlayed = maxMin(board1, depth);
+        string movePlayed = MaxMin(board1, depth);
 
         ofstream outFile(argv[2]);
         if (!outFile) {
