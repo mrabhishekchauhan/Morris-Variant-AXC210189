@@ -55,7 +55,58 @@ bool CloseMill(int loc, const string board) {
     return false;    
 }
 
-void drawBoard(const string board) {
+bool PossibleMillPresent(int loc, const string board, char piece){
+    switch (loc) {
+        case 0:
+            return ((board[6] == piece && board[18] == piece));
+        case 1:
+            return (board[11] == piece && board[20] == piece);
+        case 2:
+            return ((board[7] == piece && board[15] == piece));
+        case 3:
+            return ((board[10] == piece && board[17] == piece));
+        case 4:
+            return (board[8] == piece && board[12] == piece);
+        case 5:
+            return ((board[9] == piece && board[14] == piece));
+        case 6:
+            return ((board[0] == piece && board[18] == piece) || (board[7] == piece && board[8] == piece));
+        case 7:
+            return ((board[6] == piece && board[8] == piece) || (board[2] == piece && board[15] == piece));
+        case 8:
+            return ((board[6] == piece && board[7] == piece) || (board[4] == piece && board[12] == piece));
+        case 9:
+            return ((board[5] == piece && board[14] == piece) || (board[10] == piece && board[11] == piece));
+        case 10:
+            return ((board[9] == piece && board[11] == piece) || (board[3] == piece && board[17] == piece));
+        case 11:
+            return ((board[9] == piece && board[10] == piece) || (board[1] == piece && board[20] == piece));
+        case 12:
+            return ((board[4] == piece && board[8] == piece) || (board[13] == piece && board[14] == piece));
+        case 13:
+            return ((board[12] == piece && board[14] == piece) || (board[16] == piece && board[19] == piece));
+        case 14:
+            return ((board[5] == piece && board[9] == piece) || (board[12] == piece && board[13] == piece));
+        case 15:
+            return ((board[2] == piece && board[7] == piece) || (board[16] == piece && board[17] == piece));
+        case 16:
+            return ((board[13] == piece && board[19] == piece) || (board[15] == piece && board[17] == piece));
+        case 17:
+            return ((board[15] == piece && board[16] == piece) || (board[3] == piece && board[10] == piece));
+        case 18:
+            return ((board[0] == piece && board[6] == piece) || (board[19] == piece && board[20] == piece));
+        case 19:
+            return ((board[18] == piece && board[20] == piece) || (board[13] == piece && board[16] == piece));
+        case 20:
+            return ((board[18] == piece && board[19] == piece) || (board[1] == piece && board[11] == piece));
+        default:
+            return false;
+    }
+    return false;    
+}
+
+//Drawing the pieces on the board
+void DrawBoard(const string board) {
     cout << "        " << board[18] << "--------" << board[19] << "--------" << board[20] << endl;
     cout << "        |        |        |" << endl;
     cout << "        |  " << board[15] << "-----" << board[16] << "-----" << board[17] << "  |" << endl;
@@ -122,6 +173,7 @@ vector<int> Neighbours(int pos) {
     }
 }
 
+//Generating list of moves after removing opponent's piece
 vector<string> GenerateRemove(const string board, const vector<string>& addPieceList) {
     vector<string> moves = addPieceList;
     bool isPositionChanged = false;
@@ -142,6 +194,7 @@ vector<string> GenerateRemove(const string board, const vector<string>& addPiece
     return moves;
 }
 
+//Swapping the pieces on the board
 string Swap(const string& boardPos) {
     string swappedBoard = boardPos;
     for (char& c : swappedBoard) {
@@ -154,6 +207,7 @@ string Swap(const string& boardPos) {
     return swappedBoard;
 }
 
+//Generate list of moves for hopping pieces
 vector<string> GenerateHopping(const string board) {
     vector<string> nextHopMoveList;
     for (int i = 0; i < board.size(); ++i) {
@@ -176,6 +230,7 @@ vector<string> GenerateHopping(const string board) {
     return nextHopMoveList;
 }
 
+//Getting list of moves depending on if a mill is closes or not
 vector<string> GenerateMove(const string board) {
     vector<string> nextMoveList;
     for (int i = 0; i < board.size(); ++i) {
@@ -199,6 +254,7 @@ vector<string> GenerateMove(const string board) {
     return nextMoveList;
 }
 
+//Getting list of moves in midgame and endgame depending on the number of pieces
 vector<string> GenerateMovesMidgameEndgame(const string board) {
     if (count(board.begin(), board.end(), 'W') == 3) {
         return GenerateHopping(board);
@@ -208,6 +264,7 @@ vector<string> GenerateMovesMidgameEndgame(const string board) {
     }
 }
 
+//Getting list of moves by adding pieces to board
 vector<string> GenerateAdd(const string board) {
     vector<string> addPieceList;
     for (int i = 0; i < board.size(); ++i) {
@@ -225,6 +282,7 @@ vector<string> GenerateAdd(const string board) {
     return addPieceList;
 }
 
+//Getting list of opening moves
 vector<string> GenerateMovesOpening(const string board){
     return GenerateAdd(board);
 }
@@ -240,6 +298,18 @@ vector<string> GenerateBlackMoves(const string board) {
         nextBlackMoveList.emplace_back(processedMove);
     }
     return nextBlackMoveList;
+}
+
+int CountMills(const string board){
+    int count = 0;
+    for (int i = 0; i < board.size(); ++i) {
+        if (board[i] == 'x') {
+            if (PossibleMillPresent(i, board, 'W')) {
+                count++;
+            }
+        }
+    }
+    return count;  
 }
 
 
