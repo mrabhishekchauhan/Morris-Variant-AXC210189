@@ -3,8 +3,11 @@
 
 using namespace std;
 
+string MaxMin(const string& brdPos, int depth);
+string MinMax(const string& brdPos, int depth);
+
 int positionsEvaluated=0;
-int minMaxEstimate=0;
+int miniMaxEstimate=0;
 
 int staticEstimation(const string& board) {
     positionsEvaluated++;
@@ -26,7 +29,7 @@ string maxMin(const string& inputBoardPos, int depth) {
         int staticEst = staticEstimation(minBoard);
         if (v < staticEst) {
             v = staticEst;
-            minMaxEstimate = v;
+            miniMaxEstimate = v;
             maxBoard = wMove;
         }
     }
@@ -68,22 +71,29 @@ int main(int argc, char* argv[]) {
         inFile.close();
 
         int depth = stoi(argv[3]);
-        if (board1.size() != 22) {
+        if (board1.size() != 21) {
             cout << "Invalid board1.txt length: " << board1.size() << endl;
             return 0;
         }
 
+        cout<<"------------------Input Board------------------"<<endl;
+        cout<<"\n\n";
+        drawBoard(board1);
         string movePlayed = maxMin(board1, depth);
-
-        cout << "Board Position: " << movePlayed << endl;
-        cout << "Positions evaluated by static estimation: " << positionsEvaluated << endl;
-        cout << "MINIMAX estimate: " << minMaxEstimate << endl;
 
         ofstream outFile(argv[2]);
         if (!outFile) {
             cout << "Failed to open output file" << argv[2] << endl;
             return 0;
         }
+
+        cout<<"\n------------------Output Board------------------"<<endl;
+        cout<<"\n\n";
+        drawBoard(movePlayed);
+
+        cout << "\nOutput Board Position: " << movePlayed << endl;
+        cout << "Positions evaluated by static estimation: " << positionsEvaluated << endl;
+        cout << "MINIMAX estimate: " << miniMaxEstimate << endl;
         outFile << movePlayed;
         outFile.close();
     } catch (const exception& e) {
